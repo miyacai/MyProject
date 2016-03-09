@@ -1,0 +1,60 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse'
+//apply plugin: miya.DateAndTimePlugin
+
+repositories {
+	 mavenCentral()
+}
+
+
+ext {
+	if (project.hasProperty('e')) {
+		miya = project['e']
+	}else {
+		miya = 'miya'
+	}
+}
+
+dependencies {
+	compile 'commons-io:commons-io:2.4'
+	compile 'org.apache.commons:commons-lang3:3.4'
+	compile 'commons-logging:commons-logging:1.2'
+ }
+
+sourceSets {
+	integration{
+		java {
+			srcDir 'src/integration/java'
+		}
+		resources {
+			srcDir 'src/integration/resources'
+		}
+		compileClasspath += sourceSets.test.runtimeClasspath
+		runtimeClasspath += sourceSets.test.runtimeClasspath
+	}
+}
+
+task success{
+	println "build success!!!"
+	try{
+		Process p2 = "java -jar /Users/micai/tool/stash/mbaas/src/integration/resources/moco/moco-runner-0.10.2-standalone.jar http -p 12306 -c /Users/micai/tool/stash/mbaas/src/integration/resources/moco/test_data/b2/v9463/b2_moco.json &@amp".execute()
+		p2.waitFor()
+		println "${p2.text}"  
+	}catch(Exception e){
+		e.printStackTrace()
+		println "moco server start failed"
+	}
+	println project
+	println "miya ---> is set to [${miya}]"
+}
+
+war {
+		
+}
+
+
+
+processResources{
+	exclude 'a.properties'
+}
